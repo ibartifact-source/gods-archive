@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>神的禮物 | Digital Archive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&display=swap');
+        body, html { margin: 0; padding: 0; height: 100vh; overflow: hidden; background-color: #000; font-family: 'Noto Serif TC', serif; color: white; }
+        .rtl { direction: rtl; font-family: 'Noto Sans Arabic', sans-serif; }
+        
+        #bg-main { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('7.jpg'); background-size: cover; background-position: center; }
+        .gold-shimmer { background: linear-gradient(to right, #8a6d3b 0%, #d4af37 20%, #ffffff 50%, #d4af37 80%, #8a6d3b 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .glass-panel { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(25px); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 40px; padding: 30px; width: 90%; max-width: 800px; height: 85vh; display: flex; flex-direction: column; position: relative; z-index: 10; opacity: 0; transform: translateY(20px); transition: 0.6s; }
+        .glass-panel.show { opacity: 1; transform: translateY(0); }
+        #scroll-area { flex-grow: 1; overflow-y: auto; margin-top: 15px; }
+        #scroll-area::-webkit-scrollbar { width: 4px; }
+        #scroll-area::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
+        
+        .nav-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.2); padding: 20px; border-radius: 20px; margin-bottom: 12px; cursor: pointer; transition: 0.3s; }
+        .nav-card:hover { border-color: #d4af37; background: rgba(212, 175, 55, 0.1); transform: scale(1.01); }
+
+        /* 右下角懸浮語言切換 */
+        .lang-control { position: fixed; bottom: 25px; right: 25px; z-index: 100; display: flex; gap: 8px; }
+        .lang-dot { width: 35px; height: 35px; border-radius: 50%; border: 1px solid rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.6); color: #d4af37; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
+        .lang-dot.active { background: #d4af37; color: black; border-color: #d4af37; box-shadow: 0 0 10px #d4af37; }
+
+        #transition-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.8s; color: #d4af37; font-size: 3rem; }
+        #transition-overlay.active { opacity: 1; visibility: visible; }
+        
+        #notice-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 10, 10, 0.98); border: 1px solid #d4af37; width: 85%; max-width: 480px; padding: 35px; border-radius: 30px; z-index: 60; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+    <div id="bg-main"></div>
+    <div id="transition-overlay" class="gold-shimmer">LOADING</div>
+
+    <div id="notice-modal">
+        <h3 id="notice-title" class="text-2xl font-bold gold-shimmer mb-4">重要事項</h3>
+        <p id="notice-text" class="text-white/70 leading-relaxed mb-6 text-sm"></p>
+        <button id="notice-btn" onclick="closeNotice()" class="w-full py-4 bg-[#d4af37] text-black font-bold rounded-xl active:scale-95 transition">進入系統</button>
+    </div>
+
+    <div class="lang-control" id="lang-ctrl">
+        <div class="lang-dot active" onclick="changeLang('zh')" id="dot-zh">中</div>
+        <div class="lang-dot" onclick="changeLang('en')" id="dot-en">EN</div>
+        <div class="lang-dot" onclick="changeLang('ar')" id="dot-ar">AR</div>
+        <div class="lang-dot" onclick="changeLang('ja')" id="dot-ja">JP</div>
+        <div class="lang-dot" onclick="changeLang('th')" id="dot-th">TH</div>
+    </div>
+
+    <div class="ui-layer h-screen flex items-center justify-center px-4 relative z-10">
+        <div id="ui-start" class="text-center">
+            <h1 id="main-title" class="text-5xl md:text-7xl font-bold mb-4 gold-shimmer tracking-tighter">神的禮物</h1>
+            <p id="sub-title" class="text-lg md:text-xl mb-24 text-white/50 tracking-[0.4em]">資源下載天堂</p>
+            <button id="enter-btn" onclick="enterSystem()" class="px-16 py-4 border-2 border-[#d4af37] text-[#d4af37] rounded-full font-bold hover:bg-[#d4af37] hover:text-black transition-all">探索與領取</button>
+        </div>
+
+        <div id="ui-content" style="display: none;" class="glass-panel">
+            <div class="flex justify-between items-center">
+                <button id="back-btn" class="text-[#d4af37] text-xs font-bold px-5 py-2 border border-[#d4af37] rounded-full hover:bg-[#d4af37] hover:text-black transition" onclick="goBack()">◀ BACK</button>
+                <span id="breadcrumb" class="text-[9px] tracking-widest text-white/30 uppercase">Archive</span>
+            </div>
+            <h2 id="view-title" class="text-3xl font-bold gold-shimmer mt-4 mb-2">選擇領域</h2>
+            <div id="scroll-area"></div>
+        </div>
+    </div>
+
+    <script>
+        let db = [];
+        let state = { view: 'cat', cat: '', sub: '', lang: 'zh' };
+
+        const uiText = {
+            zh: { mTitle: "神的禮物", sTitle: "資源下載天堂", enter: "探索與領取", back: "◀ 返回", vTitle: "選擇領域", dl: "領取", nTitle: "重要事項", nBtn: "進入系統", exp: "點擊展開", nText: "本系統 PDF 內容均為「繁體中文」。<br>建議下載後自行使用 <b>Gemini</b> 進行翻譯。" },
+            en: { mTitle: "God's Gift", sTitle: "Resource Archive", enter: "EXPLORE", back: "◀ BACK", vTitle: "Categories", dl: "GET", nTitle: "Notice", nBtn: "PROCEED", exp: "Click to explore", nText: "PDF files are in <b>Traditional Chinese</b>. We recommend using <b>Gemini</b> to translate after downloading." },
+            ar: { mTitle: "هبة الله", sTitle: "أرشيف الموارد", enter: "استكشاف", back: "عودة ◀", vTitle: "الفئات", dl: "تحميل", nTitle: "تنبيه هام", nBtn: "دخول", exp: "انقر للفتح", nText: "ملفات PDF باللغة <b>الصينية</b>. نوصي باستخدام <b>Gemini</b> للترجمة." },
+            ja: { mTitle: "神の贈り物", sTitle: "ダウンロード天国", enter: "探索する", back: "◀ 戻る", vTitle: "カテゴリ", dl: "入手", nTitle: "重要事項", nBtn: "進む", exp: "クリックで展開", nText: "PDFは<b>中国語</b>です。ダウンロード後、<b>Gemini</b>での翻譯をお勧めします。" },
+            th: { mTitle: "ของขวัญจากพระเจ้า", sTitle: "แหล่งดาวน์โหลดทรัพยากร", enter: "สำรวจ", back: "◀ กลับ", vTitle: "หมวดหมู่", dl: "รับ", nTitle: "ประกาศสำคัญ", nBtn: "ดำเนินการต่อ", exp: "คลิกเพื่อเปิด", nText: "ไฟล์ PDF เป็นภาษา<b>จีน</b> แนะนำให้ใช้ <b>Gemini</b> แปลหลังจากดาวน์โหลด" }
+        };
+
+        // 頁面加載時立即執行一次初始化文字
+        function init() {
+            updateStatic();
+            fetch('./data.json').then(r => r.json()).then(data => { 
+                db = data; 
+                console.log("資料庫已就緒");
+            });
+        }
+
+        function changeLang(v) { 
+            state.lang = v; 
+            updateStatic(); 
+            if(document.getElementById('ui-content').style.display !== 'none') render(); 
+        }
+
+        function updateStatic() {
+            const t = uiText[state.lang];
+            const isRtl = state.lang === 'ar';
+            document.body.classList.toggle('rtl', isRtl);
+            
+            document.getElementById('main-title').innerText = t.mTitle;
+            document.getElementById('sub-title').innerText = t.sTitle;
+            document.getElementById('enter-btn').innerText = t.enter;
+            document.getElementById('notice-title').innerText = t.nTitle;
+            document.getElementById('notice-text').innerHTML = t.nText;
+            document.getElementById('notice-btn').innerText = t.nBtn;
+            document.getElementById('back-btn').innerText = t.back;
+
+            document.querySelectorAll('.lang-dot').forEach(d => d.classList.remove('active'));
+            document.getElementById(`dot-${state.lang}`).classList.add('active');
+        }
+
+        function enterSystem() {
+            const over = document.getElementById('transition-overlay');
+            over.innerText = uiText[state.lang].mTitle;
+            over.classList.add('active');
+            setTimeout(() => {
+                document.getElementById('ui-start').style.display = 'none';
+                document.getElementById('lang-ctrl').style.display = 'none';
+                document.getElementById('notice-modal').style.display = 'block';
+            }, 800);
+        }
+
+        function closeNotice() {
+            document.getElementById('notice-modal').style.display = 'none';
+            document.getElementById('transition-overlay').classList.remove('active');
+            document.getElementById('lang-ctrl').style.display = 'flex';
+            const c = document.getElementById('ui-content');
+            c.style.display = 'flex';
+            setTimeout(() => { c.classList.add('show'); render(); }, 50);
+        }
+
+        function render() {
+            const area = document.getElementById('scroll-area');
+            const t = uiText[state.lang];
+            area.innerHTML = '';
+            
+            // 修正：只有在最頂層分類時才隱藏返回按鈕
+            document.getElementById('back-btn').style.visibility = (state.view === 'cat') ? 'hidden' : 'visible';
+
+            if (state.view === 'cat') {
+                document.getElementById('view-title').innerText = t.vTitle;
+                const cats = [...new Set(db.map(i => i.category[state.lang]))];
+                cats.forEach(c => {
+                    area.innerHTML += `<div class="nav-card" onclick="pickCat('${c}')"><h3 class="text-xl font-bold">${c}</h3><p class="text-white/30 text-xs">${t.exp}</p></div>`;
+                });
+            } else if (state.view === 'sub') {
+                const subData = db.filter(i => i.category[state.lang] === state.cat);
+                document.getElementById('view-title').innerText = state.cat;
+                subData.forEach(i => {
+                    area.innerHTML += `<div class="nav-card" onclick="pickSub('${i.subCategory[state.lang]}')"><h3 class="text-lg"># ${i.subCategory[state.lang]}</h3></div>`;
+                });
+            } else if (state.view === 'files') {
+                const entry = db.find(i => i.category[state.lang] === state.cat && i.subCategory[state.lang] === state.sub);
+                document.getElementById('view-title').innerText = state.sub;
+                entry.items.forEach(f => {
+                    area.innerHTML += `<div class="flex justify-between items-center p-4 bg-white/5 border border-white/10 rounded-2xl mb-3"><div><h4 class="font-bold">${f.title[state.lang]}</h4><p class="text-white/30 text-[10px]">${f.desc[state.lang]}</p></div><a href="${f.file}" download class="text-[#d4af37] border border-[#d4af37] px-6 py-2 rounded-full text-xs hover:bg-[#d4af37] hover:text-black transition">${t.dl}</a></div>`;
+                });
+            }
+        }
+
+        function pickCat(c) { state.cat = c; state.view = 'sub'; render(); }
+        function pickSub(s) { state.sub = s; state.view = 'files'; render(); }
+        function goBack() { 
+            if (state.view === 'files') state.view = 'sub';
+            else if (state.view === 'sub') state.view = 'cat';
+            render(); 
+        }
+
+        // 執行初始化
+        init();
+    </script>
+</body>
+</html>
