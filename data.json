@@ -18,7 +18,7 @@
       {
         "title": { "zh": "數位生存心法", "en": "Digital Survival", "ar": "البقاء الرقمي", "ja": "デジタル生存", "th": "การอยู่รอดในระบบดิจิทัล" },
         "desc": { "zh": "核心邏輯備份", "en": "Core logic backup", "ar": "نسخة احتياطية للمنطق", "ja": "コアロジック", "th": "สำรองข้อมูลตรรกะหลัก" },
-        "file": "manus_01.pdf"
+        "file": "4500-600.pdf"
       }
     ]
   },
@@ -41,7 +41,7 @@
       {
         "title": { "zh": "暗影對話", "en": "Shadow Dialogue", "ar": "حوار الظل", "ja": "影との対話", "th": "บทสนทนากับเงามืด" },
         "desc": { "zh": "Suno 提示詞備份", "en": "Suno prompt backup", "ar": "نسخة احتياطية من Suno", "ja": "Sunoプロンプト", "th": "สำรองข้อมูล Suno prompt" },
-        "file": "mv_shadow.pdf"
+        "file": "4500-800.pdf"
       }
     ]
   },
@@ -64,29 +64,29 @@
       {
         "title": { "zh": "情緒化人聲咒語", "en": "Vocal Prompts", "ar": "أوامر صوتية", "ja": "感情的なボーカル呪文", "th": "คาถาเสียงอารมณ์" },
         "desc": { "zh": "如何讓 AI 唱出靈魂", "en": "Singing with soul", "ar": "كيف تغني بالروح", "ja": "AIに魂を込めて歌わせる", "th": "วิธีทำให้ AI ร้องเพลงด้วยจิตวิญญาณ" },
-        "file": "suno_vocal.pdf"
+        "file": "4500-1000.pdf"
       },
       {
         "title": { "zh": "未來電子樂實驗", "en": "Future Electronic", "ar": "تجربة الكترونية", "ja": "未来の電子音楽実験", "th": "การทดลองดนตรีอิเล็กทรอนิกส์แห่งอนาคต" },
         "desc": { "zh": "多層次節奏配方", "en": "Rhythm formulas", "ar": "صيغ الإيقاع", "ja": "多層的なリズムのレシピ", "th": "สูตรจังหวะหลายระดับ" },
-        "file": "suno_electro.pdf"
+        "file": "5400-1000.pdf"
       }
     ]
   },
   {
     "category": {
-      "zh": "更快捷徑",
-      "en": "Faster Shortcuts",
-      "ar": "اختصارات أسرع",
-      "ja": "最短ショートカット",
-      "th": "ทางลัดที่เร็วขึ้น"
+      "zh": "Gemini 心法",
+      "en": "Gemini Wisdom",
+      "ar": "حكمة جيميناي",
+      "ja": "Geminiの心得",
+      "th": "แนวคิด Gemini"
     },
     "subCategory": {
-      "zh": "工具與效率",
-      "en": "Tools & Efficiency",
-      "ar": "الأدوات والكفاءة",
-      "ja": "ツールと効率",
-      "th": "เครื่องมือและประสิทธิภาพ"
+      "zh": "踩過的坑",
+      "en": "Lessons Learned",
+      "ar": "الدروس المستفادة",
+      "ja": "経験した落とし穴",
+      "th": "บทเรียนที่ได้รับ"
     },
     "items": [
       {
